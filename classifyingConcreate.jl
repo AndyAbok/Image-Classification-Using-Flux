@@ -64,7 +64,6 @@ uncrackedWallDir = readdir("preprocessed_W/UW")
 crackedWall = load.("preprocessed_W/CW/" .* crackedWallDir)
 uncrackedWall = load.("preprocessed_W/UW/" .* uncrackedWallDir)	
 
-#uncrackedWall = uncrackedWall[1:416]
 classificationData = vcat(crackedWall, uncrackedWall)
 
 #= 
@@ -78,7 +77,7 @@ begin
     (x_train, y_train), (x_test, y_test) = splitobs(shuffleobs((classificationData, labels)), at = 0.7)
 end
 
-# this function creates minibatches of the data. Each minibatch is a tuple of (data, labels).
+# This function creates minibatches of the data.Each minibatch is a tuple of (data, labels).
 function createMinibatch(X, Y, idxs)    
     X_batch = Array{Float32}(undef, size(X[1])..., 1, length(idxs))
     for i in 1:length(idxs)
@@ -87,7 +86,6 @@ function createMinibatch(X, Y, idxs)
     Y_batch = onehotbatch(Y[idxs], 0:1)
     return (X_batch, Y_batch)
 end
-
 
 begin
     # here we define the train and test sets.
@@ -135,8 +133,7 @@ begin
     end
 end
 
-# here we train our model for n_epochs times.
-# here we train our model for n_epochs times.
+# Here we train our model for n epochs times.
 @epochs 10 Flux.train!(L, ps, train_set, opt;
                cb = Flux.throttle(update_loss!, 8))
 
@@ -147,7 +144,7 @@ plot!(acc, label="Accuracy", lw=2, alpha=0.9)
 @show accuracy(test_set...,Learner)
 @save "wallClassifier.bson" Learner
 
-##We define the prediction prediction Engine.
+# We define the prediction prediction Engine.
 using BSON: @load
 
 @load "wallClassifier.bson" Learner
